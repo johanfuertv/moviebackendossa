@@ -1,66 +1,60 @@
-Movie Theater Backend API
+# Movie Theater Backend API
 
-Sistema de gestión de cine que permite manejar el catálogo de películas, registro de usuarios y compra de entradas.
+Sistema de gestión de cine con funcionalidades de catálogo de películas, registro de usuarios y compra de entradas.
 
-Características
+## 📋 Características
 
-Catálogo de películas con CRUD completo, filtros y búsqueda.
+- **Catálogo de Películas**: CRUD completo con búsqueda y filtros
+- **Autenticación**: Registro y login con JWT
+- **Compras**: Sistema de compra de entradas con simulación de pago
+- **Administración**: Panel admin para gestión de películas, usuarios y compras
+- **Almacenamiento**: Soporte para S3 y almacenamiento local
+- **Email**: Envío de confirmaciones de compra
+- **Documentación**: Swagger/OpenAPI integrado
 
-Autenticación con registro y login usando JWT.
+## 🛠️ Stack Tecnológico
 
-Sistema de compra de entradas con simulación de pago.
+- **Backend**: Java 17 + Spring Boot 3.x
+- **Base de Datos**: PostgreSQL
+- **ORM**: Spring Data JPA / Hibernate
+- **Seguridad**: Spring Security + JWT
+- **Email**: Spring Mail
+- **Almacenamiento**: AWS S3 + fallback local
+- **Documentación**: SpringDoc OpenAPI
+- **Build**: Maven
 
-Panel de administración para gestionar películas, usuarios y compras.
+## 🚀 Instalación y Configuración
 
-Almacenamiento de imágenes en S3 o local.
+### Requisitos Previos
 
-Envío de correos de confirmación de compra.
+- Java 17 o superior
+- Maven 3.8+
+- PostgreSQL 13+
+- Docker y Docker Compose (opcional)
 
-Documentación de API con Swagger/OpenAPI.
+### 1. Clonar el Repositorio
 
-Tecnologías
-
-Backend: Java 17 + Spring Boot 3.x
-
-Base de datos: PostgreSQL
-
-ORM: Spring Data JPA / Hibernate
-
-Seguridad: Spring Security + JWT
-
-Email: Spring Mail
-
-Almacenamiento: AWS S3 + fallback local
-
-Documentación: SpringDoc OpenAPI
-
-Build: Maven
-
-Instalación y Configuración
-Requisitos
-
-Java 17 o superior
-
-Maven 3.8+
-
-PostgreSQL 13+
-
-Docker y Docker Compose (opcional)
-
-Clonar el repositorio
+```bash
 git clone <repository-url>
 cd movie-theater-backend
+```
 
-Configurar base de datos
+### 2. Configuración de Base de Datos
+
+Crear base de datos en PostgreSQL:
+
+```sql
 CREATE DATABASE movie_theater;
 CREATE USER movie_user WITH PASSWORD 'movie_password';
 GRANT ALL PRIVILEGES ON DATABASE movie_theater TO movie_user;
+```
 
-Variables de entorno
+### 3. Variables de Entorno
 
-Crear un archivo .env con la siguiente configuración:
+Crear archivo `.env` o configurar variables del sistema:
 
-# Base de datos
+```env
+# Database
 DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=movie_theater
@@ -78,7 +72,7 @@ MAIL_USER=your-mailtrap-user
 MAIL_PASS=your-mailtrap-pass
 MAIL_FROM=noreply@movietheater.com
 
-# Almacenamiento
+# Storage
 STORAGE_TYPE=local
 UPLOAD_DIR=uploads
 
@@ -90,140 +84,297 @@ AWS_SECRET_KEY=your-aws-secret-key
 
 # CORS
 CORS_ORIGINS=http://localhost:4200
+```
 
-Ejecutar la aplicación
+### 4. Ejecutar la Aplicación
 
-Con Maven:
+#### Opción A: Con Maven (Desarrollo)
 
+```bash
+# Instalar dependencias
 mvn clean install
+
+# Ejecutar aplicación
 mvn spring-boot:run
+```
+
+#### Opción B: Con Docker Compose (Recomendado)
+
+```bash
+# Modo desarrollo (incluye pgAdmin y Mailhog)
+docker-compose --profile dev up -d
+
+# Modo producción (solo servicios esenciales)
+docker-compose up -d
+
+# Ver logs
+docker-compose logs -f api
+```
+
 La aplicación estará disponible en:
+- **API**: http://localhost:8080
+- **Swagger UI**: http://localhost:8080/swagger-ui.html
+- **pgAdmin**: http://localhost:8081 (user: admin@movietheater.com, pass: admin123)
+- **Mailhog**: http://localhost:8025 (para ver emails en desarrollo)
 
-API: http://localhost:8080
+## 📚 API Endpoints
 
-Swagger UI: http://localhost:8080/swagger-ui.html
+### Autenticación (Público)
+- `POST /api/auth/register` - Registrar usuario
+- `POST /api/auth/login` - Iniciar sesión
 
-pgAdmin: http://localhost:8081
- (usuario: admin@movietheater.com
-, pass: admin123)
+### Películas (Público)
+- `GET /api/movies` - Listar películas activas (con filtros)
+- `GET /api/movies/{id}` - Obtener película por ID
+- `GET /api/movies/genres` - Obtener géneros disponibles
 
-Mailhog: http://localhost:8025
+### Compras (Usuario Autenticado)
+- `POST /api/purchases` - Crear compra
+- `GET /api/purchases/my-purchases` - Obtener mis compras
 
-Endpoints principales
-Autenticación
+### Administración (Solo Admin)
+- `GET /api/admin/movies` - Listar todas las películas
+- `POST /api/admin/movies` - Crear película
+- `PUT /api/admin/movies/{id}` - Actualizar película
+- `PATCH /api/admin/movies/{id}/disable` - Deshabilitar película
+- `POST /api/admin/movies/{id}/poster` - Subir poster
+- `GET /api/admin/customers` - Listar clientes
+- `PATCH /api/admin/customers/{id}/disable` - Deshabilitar cliente
+- `GET /api/admin/purchases` - Listar todas las compras
+- `GET /api/admin/stats` - Obtener estadísticas
 
-POST /api/auth/register - Registrar usuario
+## 👥 Usuarios de Prueba
 
-POST /api/auth/login - Iniciar sesión
+La aplicación incluye datos de seed con usuarios de prueba:
 
-Películas
+### Usuario Administrador
+- **Email**: admin@movietheater.com
+- **Password**: admin123
+- **Rol**: ADMIN
 
-GET /api/movies - Listar películas activas
+### Usuario Regular
+- **Email**: user@movietheater.com
+- **Password**: user123
+- **Rol**: USER
 
-GET /api/movies/{id} - Obtener película por ID
+### test@test.com
+   Password: 123456
+## 📋 Ejemplos de Uso
 
-GET /api/movies/genres - Obtener géneros
+### Registro de Usuario
 
-Compras (usuarios autenticados)
+```bash
+curl -X POST http://localhost:8080/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john.doe@example.com",
+    "phone": "+1234567890",
+    "password": "password123"
+  }'
+```
 
-POST /api/purchases - Crear compra
+### Login
 
-GET /api/purchases/my-purchases - Obtener mis compras
+```bash
+curl -X POST http://localhost:8080/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@movietheater.com",
+    "password": "user123"
+  }'
+```
 
-Administración (solo admin)
+### Comprar Entrada
 
-Gestión de películas, clientes y compras
+```bash
+curl -X POST http://localhost:8080/api/purchases \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -d '{
+    "movieId": "movie-uuid-here",
+    "quantity": 2,
+    "payment": {
+      "method": "CARD",
+      "name": "John Doe",
+      "last4": "1234"
+    }
+  }'
+```
 
-Subida de posters y deshabilitación de películas y clientes
+## 🏗️ Estructura del Proyecto
 
-Estadísticas de la plataforma
-
-Usuarios de prueba
-
-Administrador
-
-Email: admin@movietheater.com
-
-Password: admin123
-
-Usuario regular
-
-Email: user@movietheater.com
-
-Password: user123
-
-Estructura del proyecto
+```
 src/main/java/com/movietheater/
-├── entity/      # Entidades JPA
-├── repository/  # Repositorios
-├── service/     # Lógica de negocio
-├── controller/  # Controladores REST
-├── dto/         # DTOs
-├── security/    # Configuración de seguridad
-├── config/      # Configuraciones
-└── exception/   # Manejo de excepciones
+├── entity/              # Entidades JPA
+├── repository/          # Repositorios Spring Data
+├── service/            # Lógica de negocio
+├── controller/         # Controladores REST
+├── dto/               # Data Transfer Objects
+├── security/          # Configuración de seguridad
+├── config/           # Configuraciones
+└── exception/        # Manejo de excepciones
 
 src/main/resources/
-├── application.yml
-├── db/migration/
-└── templates/   # Plantillas de email
+├── application.yml         # Configuración principal
+├── db/migration/          # Migraciones Flyway
+└── templates/            # Plantillas de email
+```
 
-Funcionalidades implementadas
+## 🎯 Funcionalidades Implementadas
 
-CRUD completo de películas (admin)
+### ✅ Requerimientos Obligatorios
+- [x] MER y entidades JPA
+- [x] CRUD completo de películas (Admin)
+- [x] Registro de clientes
+- [x] Sistema de compras con email
+- [x] Autenticación JWT
+- [x] Almacenamiento de imágenes (S3 + fallback local)
+- [x] API REST documentada
 
-Registro de clientes
+### ✅ Funcionalidades Extra
+- [x] Manejo global de excepciones
+- [x] Validaciones completas
+- [x] Docker Compose para desarrollo
+- [x] Swagger/OpenAPI
+- [x] Filtros y búsqueda avanzada
+- [x] Paginación en todos los endpoints
+- [x] Estadísticas para administradores
+- [x] Health checks
+- [x] Logging estructurado
 
-Sistema de compras con email
+## 🧪 Testing
 
-Autenticación JWT
+### Ejecutar Tests Unitarios
 
-Almacenamiento de imágenes (S3 o local)
-
-API REST documentada
-
-Validaciones y manejo global de errores
-
-Paginación, filtros y búsqueda avanzada
-
-Pruebas
-
-Unitarias:
-
+```bash
 mvn test
+```
 
+### Testing Manual
 
-Manual:
+1. Usar **Swagger UI** en http://localhost:8080/swagger-ui.html
+2. Importar collection de Postman (disponible en `/docs/postman/`)
+3. Usar usuarios de prueba predefinidos
 
-Usar Swagger UI
+## 🔧 Configuración Avanzada
 
-Importar colección de Postman disponible en /docs/postman/
+### Configuración de Email
 
-Probar con usuarios de prueba
+Para usar Mailtrap en desarrollo:
 
-Despliegue
+1. Crear cuenta en [Mailtrap](https://mailtrap.io/)
+2. Obtener credenciales SMTP
+3. Configurar variables de entorno:
+
+```env
+MAIL_HOST=sandbox.smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USER=your-mailtrap-user
+MAIL_PASS=your-mailtrap-pass
+```
+
+### Configuración de AWS S3
+
+Para usar S3 para almacenamiento de imágenes:
+
+```env
+STORAGE_TYPE=s3
+AWS_S3_BUCKET=your-bucket-name
+AWS_S3_REGION=us-east-1
+AWS_ACCESS_KEY=your-access-key
+AWS_SECRET_KEY=your-secret-key
+```
+
+## 🐛 Troubleshooting
+
+### Error de Conexión a Base de Datos
+
+```bash
+# Verificar que PostgreSQL esté corriendo
+docker-compose logs postgres
+
+# Verificar conexión
+psql -h localhost -p 5432 -U postgres -d movie_theater
+```
+
+### Error de Permisos de Archivo
+
+```bash
+# Linux/Mac
+chmod +x mvnw
+
+# Crear directorio de uploads
+mkdir -p uploads
+```
+
+### Error de JWT
+
+Verificar que `JWT_SECRET` tenga al menos 256 bits (32 caracteres).
+
+## 📦 Despliegue
+
+### Construcción para Producción
+
+```bash
 mvn clean package -DskipTests
-docker build -t movie-theater-api .
-docker run -p 8080:8080 movie-theater-api
+```
 
-Contribución
+### Docker Build
+Pendiente
 
-Hacer fork del proyecto
+## 🤝 Contribución
 
-Crear una rama feature
+1. Fork el proyecto
+2. Crear rama feature (`git checkout -b feature/nueva-funcionalidad`)
+3. Commit cambios (`git commit -m 'Agregar nueva funcionalidad'`)
+4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
+5. Crear Pull Request
 
-Hacer commit de cambios
+## 📄 Licencia
 
-Hacer push a la rama
+Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
 
-Crear Pull Request
+## 📞 Soporte
 
-Licencia
 
-Licencia MIT. Ver archivo LICENSE para más detalles.
 
-Soporte
+## 🗺️ Roadmap
 
-Email: support@movietheater.com
+### Próximas Funcionalidades
+- [ ] Sistema de reservas con horarios
+- [ ] Integración con pasarela de pago real
+- [ ] Notificaciones push
+- [ ] Sistema de puntos y descuentos
+- [ ] API de recomendaciones
+- [ ] Dashboard analytics avanzado
 
-Issues: GitHub Issues
+## 📊 Métricas y Monitoreo
+
+La aplicación incluye endpoints de salud y métricas:
+
+- **Health Check**: `GET /actuator/health`
+- **Metrics**: `GET /actuator/metrics`
+- **Info**: `GET /actuator/info`
+
+## 🔐 Seguridad
+
+- Passwords hasheados con BCrypt
+- JWT con expiración configurable
+- CORS configurado
+- Validación de entrada en todos los endpoints
+- Rate limiting (configurable)
+- Headers de seguridad HTTP
+
+## 🚀 Performance
+
+- Conexión pool de base de datos optimizado
+- Lazy loading en relaciones JPA
+- Paginación en listados grandes
+- Cache de archivos estáticos
+- Compresión GZIP habilitada
+
+---
+
+**¡Gracias por usar Movie Theater API! 🎬🍿**
