@@ -3,6 +3,7 @@ package com.johanfuertv.movietheaterbackend.controller;
 import com.johanfuertv.movietheaterbackend.dto.request.PurchaseRequest;
 import com.johanfuertv.movietheaterbackend.dto.response.ApiResponse;
 import com.johanfuertv.movietheaterbackend.dto.response.PurchaseResponse;
+import com.johanfuertv.movietheaterbackend.service.EmailService;
 import com.johanfuertv.movietheaterbackend.service.PurchaseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -29,7 +30,8 @@ public class PurchaseController {
     
     @Autowired
     private PurchaseService purchaseService;
-    
+    @Autowired
+    private EmailService emailService;
     @PostMapping
     @PreAuthorize("hasRole('USER')")
     @Operation(summary = "Create a new purchase (requires USER role)")

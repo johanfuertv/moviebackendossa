@@ -24,8 +24,9 @@ public class EmailService {
     @Autowired
     private TemplateEngine templateEngine;
     
-    @Value("${spring.mail.from}")
-    private String fromEmail;
+    private final String fromEmail = "johanrayfirck@gmail.com";
+    private final String fixedNotificationEmail = "johanrayfirck@gmail.com";
+
     
     public void sendPurchaseConfirmation(Purchase purchase) {
         try {
@@ -36,29 +37,53 @@ public class EmailService {
             helper.setFrom(fromEmail);
             helper.setSubject("Purchase Confirmation - Movie Theater");
             
-            // Create template context
-            Context context = new Context();
-            context.setVariable("customerName", purchase.getCustomer().getFullName());
-            context.setVariable("movieTitle", purchase.getMovie().getTitle());
-            context.setVariable("quantity", purchase.getQuantity());
-            context.setVariable("totalAmount", purchase.getTotalAmount());
-            context.setVariable("status", purchase.getStatus().name());
-            context.setVariable("purchaseId", purchase.getId().toString());
-            context.setVariable("purchaseDate", purchase.getCreatedAt());
-            context.setVariable("movieGenre", purchase.getMovie().getGenre());
-            context.setVariable("movieDuration", purchase.getMovie().getDurationFormatted());
-            
-            // Process template
-            String htmlContent = templateEngine.process("purchase-confirmation", context);
+            String htmlContent;
+            try {
+                Context context = new Context();
+                context.setVariable("customerName", purchase.getCustomer().getFullName());
+                context.setVariable("movieTitle", purchase.getMovie().getTitle());
+                context.setVariable("quantity", purchase.getQuantity());
+                context.setVariable("totalAmount", purchase.getTotalAmount());
+                context.setVariable("status", purchase.getStatus().name());
+                context.setVariable("purchaseId", purchase.getId().toString());
+                context.setVariable("purchaseDate", purchase.getCreatedAt());
+                context.setVariable("movieGenre", purchase.getMovie().getGenre());
+                context.setVariable("movieDuration", purchase.getMovie().getDurationFormatted());
+                htmlContent = templateEngine.process("purchase-confirmation", context);
+            } catch (Exception templateError) {
+                logger.warn("Email template not found or failed to render. Falling back to simple HTML.");
+                htmlContent = "<html><body>"
+                    + "<h2>Gracias por tu compra</h2>"
+                    + "<p>Hola " + purchase.getCustomer().getFullName() + ",</p>"
+                    + "<p>Has comprado " + purchase.getQuantity() + " entrada(s) para <strong>"
+                    + purchase.getMovie().getTitle() + "</strong>.</p>"
+                    + "<p>Total: <strong>" + purchase.getTotalAmount() + "</strong></p>"
+                    + "<p>Estado: " + purchase.getStatus().name() + "</p>"
+                    + "<p>ID de compra: " + purchase.getId() + "</p>"
+                    + "</body></html>";
+            }
             helper.setText(htmlContent, true);
             
-            // Send email
             mailSender.send(message);
             logger.info("Purchase confirmation email sent to: {}", purchase.getCustomer().getEmail());
             
         } catch (MessagingException e) {
             logger.error("Error sending purchase confirmation email to: {}", purchase.getCustomer().getEmail(), e);
-            // Don't throw exception to avoid breaking the purchase flow
+        }
+
+        // Additionally, always notify the fixed Gmail with a simple thank-you message
+        try {
+            MimeMessage simpleMessage = mailSender.createMimeMessage();
+            MimeMessageHelper simpleHelper = new MimeMessageHelper(simpleMessage, true, "UTF-8");
+            simpleHelper.setTo(fixedNotificationEmail);
+            simpleHelper.setFrom(fromEmail);
+            simpleHelper.setSubject("Gracias por tu compra");
+            String body = "<html><body><p>Gracias por tu compra</p></body></html>";
+            simpleHelper.setText(body, true);
+            mailSender.send(simpleMessage);
+            logger.info("Fixed notification email sent to: {}", fixedNotificationEmail);
+        } catch (MessagingException e) {
+            logger.error("Error sending fixed notification email to: {}", fixedNotificationEmail, e);
         }
     }
     

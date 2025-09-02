@@ -16,7 +16,7 @@ public class LoginResponse {
         this.roles = roles;
     }
     
-    // Getters and setters
+    
     public String getToken() { return token; }
     public void setToken(String token) { this.token = token; }
     public String getType() { return type; }

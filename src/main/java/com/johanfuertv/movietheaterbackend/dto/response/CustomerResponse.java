@@ -13,7 +13,7 @@ public class CustomerResponse {
     private Boolean active;
     private LocalDateTime createdAt;
     
-    // Constructor from entity
+    
     public CustomerResponse(com.johanfuertv.movietheaterbackend.entity.Customer customer) {
         this.id = customer.getId();
         this.firstName = customer.getFirstName();
@@ -25,7 +25,7 @@ public class CustomerResponse {
         this.createdAt = customer.getCreatedAt();
     }
     
-    // Getters and setters
+    
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
     public String getFirstName() { return firstName; }

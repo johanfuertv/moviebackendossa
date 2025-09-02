@@ -38,12 +38,12 @@ public class AuthService {
     private JwtTokenProvider tokenProvider;
     
     public CustomerResponse register(RegisterRequest request) {
-        // Check if email already exists
+        // AQUI ES EL EMAIL TESTING
         if (customerRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Email already exists: " + request.getEmail());
         }
         
-        // Create new customer
+        
         Customer customer = new Customer();
         customer.setFirstName(request.getFirstName());
         customer.setLastName(request.getLastName());
@@ -61,21 +61,21 @@ public class AuthService {
     
     public LoginResponse login(LoginRequest request) {
         try {
-            // Authenticate user
+            
             Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
             );
             
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             
-            // Generate JWT token
+            
             String token = tokenProvider.generateToken(userDetails);
             
-            // Get customer details
+            
             Customer customer = customerRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
             
-            // Prepare response
+            
             CustomerResponse customerResponse = new CustomerResponse(customer);
             List<String> roles = Arrays.asList(customer.getRoles().split(","));
             

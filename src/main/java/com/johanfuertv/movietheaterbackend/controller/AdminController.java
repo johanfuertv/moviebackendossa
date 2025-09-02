@@ -50,7 +50,7 @@ public class AdminController {
     @Autowired
     private PurchaseService purchaseService;
     
-    // Movie Management
+    
     @GetMapping("/movies")
     @Operation(summary = "Get all movies (including inactive)")
     public ResponseEntity<ApiResponse<Page<MovieResponse>>> getAllMoviesAdmin(
@@ -139,7 +139,7 @@ public class AdminController {
         }
     }
     
-    // Customer Management
+    
     @GetMapping("/customers")
     @Operation(summary = "Get all customers")
     public ResponseEntity<ApiResponse<Page<CustomerResponse>>> getAllCustomers(
@@ -178,7 +178,7 @@ public class AdminController {
         }
     }
     
-    // Purchase Management
+    
     @GetMapping("/purchases")
     @Operation(summary = "Get all purchases with optional filtering")
     public ResponseEntity<ApiResponse<Page<PurchaseResponse>>> getAllPurchases(

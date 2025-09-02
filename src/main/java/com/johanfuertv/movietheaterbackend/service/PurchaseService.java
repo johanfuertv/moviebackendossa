@@ -45,48 +45,48 @@ public class PurchaseService {
     
     @Transactional
     public PurchaseResponse createPurchase(PurchaseRequest request) {
-        // Get current authenticated user
+        
         Customer customer = getCurrentCustomer();
         
-        // Validate customer is active
+        
         if (!customer.getActive()) {
             throw new RuntimeException("Customer account is not active");
         }
         
-        // Get movie and validate it's available
+        
         Movie movie = movieRepository.findByIdAndActiveTrue(request.getMovieId())
             .orElseThrow(() -> new ResourceNotFoundException("Movie not found or not available: " + request.getMovieId()));
         
-        // Create purchase
+        
         Purchase purchase = new Purchase();
         purchase.setCustomer(customer);
         purchase.setMovie(movie);
         purchase.setQuantity(request.getQuantity());
         
-        // Calculate total amount
+        
         BigDecimal totalAmount = movie.getPrice().multiply(BigDecimal.valueOf(request.getQuantity()));
         purchase.setTotalAmount(totalAmount);
         
-        // Set payment information
+        
         purchase.setPaymentMethod(request.getPayment().getMethod());
         purchase.setLast4(request.getPayment().getLast4());
         purchase.setPaymentNote("Payment by " + request.getPayment().getName());
         
-        // Simulate payment processing (always successful for now)
+        
         purchase.setStatus(Purchase.PurchaseStatus.PAID);
         
-        // Save purchase
+        // Guardar la Compra
         Purchase savedPurchase = purchaseRepository.save(purchase);
         
         logger.info("Purchase created - ID: {}, Customer: {}, Movie: {}, Amount: {}", 
                    savedPurchase.getId(), customer.getEmail(), movie.getTitle(), totalAmount);
         
-        // Send confirmation email asynchronously
+        
         try {
             emailService.sendPurchaseConfirmation(savedPurchase);
         } catch (Exception e) {
             logger.error("Error sending purchase confirmation email", e);
-            // Don't fail the purchase if email fails
+            
         }
         
         return new PurchaseResponse(savedPurchase);

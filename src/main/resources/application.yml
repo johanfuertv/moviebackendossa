@@ -30,18 +30,21 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
   
+  
   mail:
-    host: ${MAIL_HOST:sandbox.smtp.mailtrap.io}
+    host: ${MAIL_HOST:smtp.mailtrap.io}
     port: ${MAIL_PORT:2525}
-    username: ${MAIL_USER:your-username}
-    password: ${MAIL_PASS:your-password}
+    username: ${MAIL_USER:3e364294e7f8b3}
+    password: ${MAIL_PASS:c77cd1ef5e4755}
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
-    from: ${MAIL_FROM:noreply@movietheater.com}
+    from: ${MAIL_FROM:johanrayfirck@gmail.com}
+  
+    
 
 # JWT Configuration
 jwt:
@@ -53,8 +56,10 @@ aws:
   s3:
     bucket: ${AWS_S3_BUCKET:movie-theater-images}
     region: ${AWS_S3_REGION:us-east-1}
-    access-key: ${AWS_ACCESS_KEY:}
-    secret-key: ${AWS_SECRET_KEY:}
+    access-key: ${AWS_ACCESS_KEY:AKIAZQYWNRV2A3PHHUDC}
+    secret-key: ${AWS_SECRET_KEY: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}
+
+
 
 # Storage Configuration
 storage:

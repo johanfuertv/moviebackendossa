@@ -37,7 +37,7 @@ public class AuthController {
         try {
             CustomerResponse customer = authService.register(request);
             
-            // Send welcome email asynchronously
+            
             try {
                 emailService.sendWelcomeEmail(customer.getEmail(), customer.getFirstName());
             } catch (Exception e) {
